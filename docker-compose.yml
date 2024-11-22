@@ -1,0 +1,35 @@
+version: '3.12'
+
+services:
+  api:
+    container_name: "api"
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=${APP_ENV:-local}
+      - DATABASE_URL=${DATABASE_URL}
+    depends_on:
+      - db
+    networks:
+      - app_network
+
+  db:
+    container_name: "database"
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: image_db
+    networks:
+      - app_network
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+
+networks:
+  app_network:
